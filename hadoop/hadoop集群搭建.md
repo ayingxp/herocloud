@@ -174,6 +174,16 @@ bin/hdfs namenode -format
 sbin/start-all.sh
 sbin/start-yarn.sh
 
+# 关闭
+sbin/stop-dfs.sh
+sbin/stop-yarn.sh
+
 运行后，在master，slave01,slave02运行jps命令，查看：
 jps
 ```
+
+### 重置hadoop环境[移除hadoop hdfs log文件](谨慎操作)
+
+`rm -rf /opt/hadoop/hadoop-3.1.0/logs/*`
+<br>
+`rm -rf /var/lib/hadoop/`
