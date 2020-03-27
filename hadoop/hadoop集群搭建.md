@@ -53,3 +53,111 @@ ClientAliveCountMax 86400
 
 ### 安装hadoop
 `先在master主机上做安装Hadoop，暂时不需要在slave01,slave02主机上安装Hadoop.稍后会把master配置好的Hadoop发送给slave01,slave02.`
+- `在master主机执行如下操作`
+    - `sudo tar -zxf ~/下载/hadoop-2.7.3.tar.gz -C /usr/local    # 解压到/usr/local中`
+    - `cd /usr/local/`
+    - `sudo mv ./hadoop-2.7.3/ ./hadoop            # 将文件夹名改为hadoop`
+    - `sudo chown -R hadoop ./hadoop       # 修改文件权限`
+
+    - `编辑~/.bashrc文件，添加如下内容：`
+        - `export HADOOP_HOME=/usr/local/hadoop`
+        - `export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin`
+    - `接着让环境变量生效:`
+        - `source ~/.bashrc`
+
+
+### hadoop集群配置
+`修改master主机的Hadoop如下配置文件，这些配置文件都位于/usr/local/hadoop/etc/hadoop目录下。
+修改workers:`
+<br>
+<br>
+
+`这里把DataNode的主机名写入该文件，每行一个。这里让master节点主机仅作为NameNode使用。`
+
+`slave01`<br>
+`slave02` <br>
+
+- 修改core-site.xml
+```
+ <configuration>
+      <property>
+          <name>hadoop.tmp.dir</name>
+          <value>file:/usr/local/hadoop/tmp</value>
+          <description>Abase for other temporary directories.</description>
+      </property>
+      <property>
+          <name>fs.defaultFS</name>
+          <value>hdfs://master:9000</value>
+      </property>
+  </configuration>
+```
+
+- 修改hdfs-site.xml
+```
+ <configuration>
+    <property>
+        <name>dfs.replication</name>
+        <value>3</value>
+    </property>
+    </configuration>
+```
+
+- 修改mapred-site.xml(复制mapred-site.xml.template,再修改文件名)
+```
+<configuration>
+    <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+  </configuration>
+```
+
+- 修改yarn-site.xml
+```
+<configuration>
+  <!-- Site specific YARN configuration properties -->
+      <property>
+          <name>yarn.nodemanager.aux-services</name>
+          <value>mapreduce_shuffle</value>
+      </property>
+      <property>
+          <name>yarn.resourcemanager.hostname</name>
+          <value>master</value>
+      </property>
+  </configuration>
+```
+
+- 复制到其他结点
+```
+配置好后，将 master 上的 /usr/local/Hadoop 文件夹复制到各个节点上。之前有跑过伪分布式模式，建议在切换到集群模式前先删除之前的临时文件
+```
+
+```
+在 master 节点主机上执行：
+cd /usr/local/
+rm -rf ./hadoop/tmp   # 删除临时文件
+rm -rf ./hadoop/logs/*   # 删除日志文件
+tar -zcf ~/hadoop.master.tar.gz ./hadoop
+cd ~
+scp ./hadoop.master.tar.gz slave01:/home/hadoop
+scp ./hadoop.master.tar.gz slave02:/home/hadoop
+```
+
+- 在slave01,slave02节点上执行：
+```
+sudo rm -rf /usr/local/hadoop/
+sudo tar -zxf ~/hadoop.master.tar.gz -C /usr/local
+sudo chown -R hadoop /usr/local/hadoop
+```
+
+### 启动集群
+
+```
+在master主机上执行如下命令:
+cd /usr/local/hadoop
+bin/hdfs namenode -format
+sbin/start-all.sh
+
+运行后，在master，slave01,slave02运行jps命令，查看：
+jps
+```
