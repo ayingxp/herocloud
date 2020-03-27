@@ -93,8 +93,22 @@ ClientAliveCountMax 86400
 ```
 
 - 修改hdfs-site.xml
+`在集群的结点上创建/var/lib/hadoop/hdfs/name和/var/lib/hadoop/hdfs/data目录`<br>
+`将/var/lib/hadoop目录的权限赋给hadoop用户`<br>
+
 ```
  <configuration>
+
+    <property>
+        <name>dfs.namenode.name.dir</name>
+        <value>/var/lib/hadoop/hdfs/name/</value>
+    </property>
+
+    <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>/var/lib/hadoop/hdfs/data/</value>
+    </property>
+
     <property>
         <name>dfs.replication</name>
         <value>3</value>
@@ -149,6 +163,7 @@ sudo rm -rf /usr/local/hadoop/
 sudo tar -zxf ~/hadoop.master.tar.gz -C /usr/local
 sudo chown -R hadoop /usr/local/hadoop
 ```
+
 
 ### 启动集群
 
