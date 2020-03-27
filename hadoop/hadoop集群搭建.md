@@ -172,6 +172,7 @@ sudo chown -R hadoop /usr/local/hadoop
 cd /usr/local/hadoop
 bin/hdfs namenode -format
 sbin/start-all.sh
+sbin/start-yarn.sh
 
 运行后，在master，slave01,slave02运行jps命令，查看：
 jps
