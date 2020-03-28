@@ -88,7 +88,7 @@ sudo tar -zxf ~/spark.master.tar.gz -C /usr/local
 sudo chown -R hadoop /usr/local/spark
 ```
 
-- 启动集群
+- 启动spark集群
 ```
 1. 首先要启动Ｈadoop集群,在master结点主机上运行如下命令:
 cd /usr/local/hadoop
@@ -100,4 +100,18 @@ cd /usr/local/spark
 
 3.启动所有slave结点，在master结点主机上运行如下命令:
 ./sbin/start-slaves.sh
+```
+
+- 关闭spark集群
+```
+在master结点上执行如下命令:
+1. 关闭master结点
+./sbin/stop-master.sh
+
+2. 关闭worker结点
+./sbin/stop-slaves.sh
+
+3. 关闭Hadoop集群
+cd /usr/local/hadoop
+./sbin/stop-all.sh
 ```
