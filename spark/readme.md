@@ -115,3 +115,91 @@ cd /usr/local/spark
 cd /usr/local/hadoop
 ./sbin/stop-all.sh
 ```
+
+## 在集群上运行Spark应用程序
+### 启动Spark集群
+```
+启动hadoop集群:
+cd /usr/local/hadoop
+./sbin/start-all.sh
+
+启动Spark的master结点和所有slaves结点
+
+cd /usr/local/spark
+./sbin/start-master.sh
+./sbin/start-slaves.sh
+
+```
+
+### 采用独立集群管理器
+- 在集群中运行应用程序
+```
+向独立集群管理器中提交应用，需要把spark://master:7077作为主结点参数传递给spark-submit.
+
+以spark自带的样例程序SparkPi（计算圆周率）为例子：
+
+cd /usr/local/spark
+./bin/spark-submit --master spark://master:7077 \
+/usr/local/spark/examples/src/main/python/pi.py
+```
+
+- 在集群中运行pyspark
+`也可以用pyspark连接到独立集群管理器上`<br>
+```
+cd /usr/local/spark
+./bin/pyspark --master spark://master:7077
+
+===============================================
+textFile=sc.textFile("hdfs://master:9000/README.md")
+textFile.count()
+textFile.first()
+```
+
+- 查看集群信息
+```
+用户在独立集群管理web界面查看应用的运行情况:
+http://master:8080/
+
+```
+
+
+### 采用Ｈadoop Yarn管理器
+
+- 在集群中运行应用程序
+```
+向hadoop yarn 集群管理器提交应用， 需要把yarn-client或者yarn-cluster(测试可行)作为主结点参数传递给spark-submit
+
+cd /usr/local/spark
+./bin/spark-submit --master yarn-cluster \
+/usr/local/spark/examples/src/main/python/pi.py
+
+运行成功后，根据在shell中得到的输出结果地址查看：
+http://master:8088/proxy/application_1585382647418_0003/
+
+点击logs 再点击 stdout
+```
+
+- 在集群中运行pyspark程序
+```
+也可以用pyspark连接到采用yarn作为集群管理器的集群上
+
+pyspark --master yarn
+
+假设HDFS的根目录下已经存在一个文件READ.md, 在pyspark中执行如下语句:
+
+textFile=sc.textFile("hdfs://master:9000/README.md")
+textFile.count()
+textFile.first()
+```
+
+- 查看集群信息
+```
+用户在hadoop yarn 集群管理web 界面查看所有应用的运行情况:
+http://master:8088/cluster
+```
+
+## web ui
+- spark master
+    - http://master:8080/
+- hadoop cluster
+    - http://master:8088/
