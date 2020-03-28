@@ -37,4 +37,10 @@
 
 ## pyspark
 `cd /usr/local/spark && ./bin/pyspark --master local[4]` <br>
-`cd /usr/local/spark && ./bin/pyspark --master local[4] --jars code1.jar,code2.jar,code3.jar`
+`cd /usr/local/spark && ./bin/pyspark --master local[4] --jars code1.jar,code2.jar,code3.jar`<br>
+
+- 配置pyspark路径
+`在~/.bashrc中添加 SPARK_HOME 和 PYTHONPATH变量`<br>
+`export SPARK_HOME=/usr/local/spark`<br>
+`export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.7-src.zip:$PYTHONPATH`
+
