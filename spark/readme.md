@@ -42,5 +42,62 @@
 - 配置pyspark路径
 `在~/.bashrc中添加 SPARK_HOME 和 PYTHONPATH变量`<br>
 `export SPARK_HOME=/usr/local/spark`<br>
-`export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.7-src.zip:$PYTHONPATH`
+`export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.7-src.zip:$PYTHONPATH`<br>
+`export PAHT=$PATH:$SPARK_HOME/bin`<br>
+`然后运行 source ~/.bashrc命令`
 
+
+## spark集群环境配置
+- 环境变量设置
+`在master结点中的~/.bashrc中添加:export SPARK_HOME=/usr/local/spark和export PAHT=$PATH:$SPARK_HOME/bin:$HADOOP_HOME/bin`
+
+- slaves文件配置
+`将 slaves.template 拷贝到 slaves:`<br>
+`cd $SPARK_HOME && cp ./conf/slaves.template ./conf/slaves`<br>
+`slaves文件设置worker结点，编辑slaves内容，把默认内容localhost替换成如下内容: `<br>
+`slave01`<br>
+`slave02`<br>
+
+- 配置spark-env.sh文件
+```
+将spark-env.sh.template拷贝到spark-env.sh:
+
+cp ./conf/spark-env.sh.template ./conf/spark-env.sh
+
+编辑spark-env.sh文件，添加如下内容:
+export SPARK_DIST_CLASSPATH=$(/usr/local/hadoop classpath)
+export HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop
+export SPARK_MASTER_IP=192.168.0.29
+```
+
+- 配置slaves结点
+```
+配置号master结点的spark后,将master主机上的/usr/local/spark文件夹复制到各个结点上.
+在master结点上执行如下命令：
+
+cd /usr/local
+tar -zcf ~/spark.master.tar.gz ./spark
+cd ~
+scp ./spark.master.tar.gz slave01:/home/hadoop
+scp ./spark.master.tar.gz slave02:/home/hadoop
+
+在slave01和slave02上分别执行下面的操作:
+
+sudo  rm -rf /usr/local/spark
+sudo tar -zxf ~/spark.master.tar.gz -C /usr/local
+sudo chown -R hadoop /usr/local/spark
+```
+
+- 启动集群
+```
+1. 首先要启动Ｈadoop集群,在master结点主机上运行如下命令:
+cd /usr/local/hadoop
+./sbin/start-all.sh
+
+2. 启动Master结点，在master结点主机上运行如下命令:
+cd /usr/local/spark
+./sbin/start-master.sh
+
+3.启动所有slave结点，在master结点主机上运行如下命令:
+./sbin/start-slaves.sh
+```
