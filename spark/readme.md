@@ -49,7 +49,8 @@
 
 ## spark集群环境配置
 - 环境变量设置
-`在master结点中的~/.bashrc中添加:export SPARK_HOME=/usr/local/spark和export PAHT=$PATH:$SPARK_HOME/bin:$HADOOP_HOME/bin`
+`在master结点中的~/.bashrc中添加:export SPARK_HOME=/usr/local/spark和export PAHT=$PATH:$SPARK_HOME/bin:$HADOOP_HOME/bin`<br>
+`export PYSPARK_PYTHON=/usr/local/anaconda3/bin/python`
 
 - slaves文件配置
 `将 slaves.template 拷贝到 slaves:`<br>
@@ -68,6 +69,7 @@ cp ./conf/spark-env.sh.template ./conf/spark-env.sh
 export SPARK_DIST_CLASSPATH=$(/usr/local/hadoop classpath)
 export HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop
 export SPARK_MASTER_IP=192.168.0.29
+
 ```
 
 - 配置slaves结点
